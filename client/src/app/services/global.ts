@@ -1,5 +1,5 @@
 export var GLOBAL = {
 
-    url: 'https://obscure-woodland-72657.herokuapp.com/'
+    url: 'https://wish-friend-list.herokuapp.com/'
     
 }
