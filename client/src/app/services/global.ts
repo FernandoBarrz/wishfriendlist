@@ -1,5 +1,5 @@
 export var GLOBAL = {
 
-    url: 'http://localhost:3800/api/'
+    url: 'https://cryptic-springs-85237.herokuapp.com/'
     
 }
