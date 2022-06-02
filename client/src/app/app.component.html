@@ -57,20 +57,26 @@
           </li>
 
           <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="">
               {{identity.name}} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a href="#">
+                <a [routerLink]="['/profile', identity._id]">
                   <span class="glyphicon glyphicon-user"></span>
-                  Mi perfil
+                  Mi Perfil
                 </a>
               </li>
               <li>
                 <a [routerLink]="['/myData']">
                   <span class="glyphicon glyphicon-cog"></span>
-                  Mis datos
+                  Mis Datos
+                </a>
+              </li>
+              <li>
+                <a [routerLink]="['/wishlist', identity._id, 1]">
+                  <span class="glyphicon glyphicon-cog"></span>
+                  Mi WishList
                 </a>
               </li>
               <li>

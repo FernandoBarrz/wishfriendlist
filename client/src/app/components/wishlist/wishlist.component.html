@@ -1,0 +1,71 @@
+<div class="col-lg-8">
+    <h1 class="h1-strong" *ngIf="user"> {{title}} {{user.name}}
+    </h1>
+
+    <div id="events" *ngIf="wishList">
+        <div *ngFor="let wishObject of wishList" class="itemPublication">
+            <div class="panel panel-default">
+                <div class="panel-body">
+    
+                    <div>
+                        <a [routerLink]="['/profile', wishObject.user._id]" class="userName"> {{wishObject.user.name + ' ' + wishObject.user.lastName}} </a>
+                    </div>
+                    
+                    <h5> {{wishObject.name}}</h5>
+                
+                    <h5> {{wishObject.objectUrl}}</h5>
+
+                    <h4 class="publicationText pull-left">
+                        {{wishObject.price}}
+                    </h4>
+
+                    <div class="pull-right"  *ngIf="wishObject.user._id == identity._id">
+
+                        <a href="#myModal{{wishObject._id}}" role="button" class="btn btn-large btn-danger"
+                        data-toggle="modal">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+
+                        <div id="myModal{{wishObject._id}}" class="modal fade">
+
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <h4 class="modal-title">Confirmación</h4>
+
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>¿En verdad quieres eliminar este artículo de tu wishlist?</p>
+                                        <p class="text-warning"><small>No lo podrás recuperar. Tendrás que crearla de nuevo</small></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <button (click)="deleteWishObject(wishObject._id)"type="button" data-dismiss="modal" class="btn btn-primary">
+                                            Borrar artículo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="pagination pull-right">
+            <li *ngIf="page > 1">
+                <a [routerLink]="['/wishlist', userPageId, prevPage]">Anterior</a>
+            </li>
+            <li *ngIf="pages != page">
+                <a [routerLink]="['/wishlist', userPageId, nextPage]">Siguiente</a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+<sidebar></sidebar>
+
+<div class="clearfix"></div>

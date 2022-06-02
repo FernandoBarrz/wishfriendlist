@@ -30,11 +30,11 @@ function unfollow(req, res)
     var followedId = req.params.id;
 
     Follow.find({'user': userId, 'followed': followedId}).deleteOne(err =>
-        {
-            if(err) return res.status(500).send({message: 'Error al dejar de seguir'});
+    {
+        if(err) return res.status(500).send({message: 'Error al dejar de seguir'});
 
-            return res.status(200).send({message: 'El usuario se ha dejado de seguir'});
-        });
+        return res.status(200).send({message: 'El usuario se ha dejado de seguir'});
+    });
 }
 
 
@@ -47,7 +47,7 @@ function getFollowingUsers(req, res)
         userId = req.params.id;
 
     }
-
+    
     var page = 1;
 
     if(req.params.page)
@@ -61,21 +61,72 @@ function getFollowingUsers(req, res)
 
     var itemsPerPage = 4;
 
-    Follow.find({followed: userId}).populate({path: 'followed'}).paginate(page, itemsPerPage, (err, follows, total) =>{
+    Follow.find({user: userId}).populate({path: 'followed'}).paginate(page, itemsPerPage, (err, follows, total) =>{
 
         if(err) return res.status(500).send({message: 'Error en el servidor'});
 
         if(!follows) return res.status(404).send({message: 'No estás siguiendo a ningún usuario'});
 
-        return res.status(200).send({
-
-            total: total,
-            pages: Math.ceil(total/itemsPerPage),
-            follows
-
+        followUserIds(req.user.sub).then((value) =>
+        {
+            return res.status(200).send({
+                total: total,
+                pages: Math.ceil(total/itemsPerPage),
+                follows,
+                usersFollowing: value.following,
+                usersFollowMe: value.followed
+            })
         });
 
     });
+
+}
+
+async function followUserIds(userId)
+{
+    try{
+        //Obejter los usuarios que seguimos          //El select es para mostrar los campos que yo quiera
+        var following = await Follow.find({'user': userId }).select({'_id':0, '__v':0, 'user': 0}).exec()
+            .then((following) =>{
+                var follows_clean = [];
+    
+                following.forEach((follow) =>{
+                    //console.log("followed", follow.followed);
+                    //Guardar los usuarios que yo sigo
+                    follows_clean.push(follow.followed);
+                });
+    
+                return follows_clean;
+            })
+            .catch((err)=>{ 
+                return handleerror(err);
+            });
+    
+        //Obejter los usuarios que seguimos          //El select es para mostrar los campos que yo quiera
+        var followed = await Follow.find({'followed':userId }).select({'_id':0, '__v':0, 'followed': 0}).exec()
+            .then((following) =>{
+                var follows_clean = [];
+    
+                following.forEach((follow) =>{
+                    //console.log("user", follow.user);
+                    //Guardar los usuarios que yo sigo
+                    follows_clean.push(follow.user);
+                });
+    
+                return follows_clean;
+            })
+            .catch((err)=>{
+                return handleerror(err);
+            });
+    
+        return {
+            following: following,
+            followed: followed
+        }
+
+    }catch(e){
+        console.log(e);
+    }
 
 }
 
@@ -98,20 +149,22 @@ function getFollowedUsers(req, res)
 
     var itemsPerPage = 4;
 
-    Follow.find({user: userId}).populate('user').paginate(page, itemsPerPage, (err, follows, total) =>{
+    Follow.find({followed: userId}).populate('user').paginate(page, itemsPerPage, (err, follows, total) =>{
 
         if(err) return res.status(500).send({message: 'Error en el servidor'});
 
-        if(!follows) return res.status(404).send({message: 'No estás siguiendo a ningún usuario'});
+        if(!follows) return res.status(404).send({message: 'No te sigue ningún usuario'});
 
-        return res.status(200).send({
-
-            total: total,
-            pages: Math.ceil(total/itemsPerPage),
-            follows
-
+        followUserIds(req.user.sub).then((value) =>
+        {
+            return res.status(200).send({
+                total: total,
+                pages: Math.ceil(total/itemsPerPage),
+                follows,
+                usersFollowing: value.following,
+                usersFollowMe: value.followed
+            })
         });
-
     });
 }
 

@@ -16,7 +16,7 @@
                     </div>
                     <div class="userName pull-left">
                         <p class="fullName">
-                            <a href="#">
+                            <a [routerLink]="['/profile', user._id]">
                                 {{user.name + ' ' + user.lastName}}
                             </a>
                         </p>
@@ -57,7 +57,7 @@
                 <a [routerLink]="['/users', prevPage]">Anterior</a>
             </li>
             <li *ngIf="pages != page">
-                <a [routerLink]="['/users',nextPage]">Siguiente</a>
+                <a [routerLink]="['/users', nextPage]">Siguiente</a>
             </li>
         </ul>
     </div>
